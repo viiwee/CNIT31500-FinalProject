@@ -11,6 +11,12 @@ stdio.h
 -
 curl/curl.h
 -
+string.h
+-
+time.h
+-
+stdlib.h
+-
 
 C:/Users/Matthew/CLionProjects/CNIT31500-FinalProject/curl-7.76.1-win64-mingw/include/curl/curl.h
 curlver.h
