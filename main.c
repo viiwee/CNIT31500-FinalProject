@@ -4,6 +4,12 @@
 
 #include <stdio.h>
 #include <curl/curl.h>
+#include <string.h>
+
+struct url_data {
+    size_t size;
+    char* data;
+};
 
 int main() {
     CURL *curl;

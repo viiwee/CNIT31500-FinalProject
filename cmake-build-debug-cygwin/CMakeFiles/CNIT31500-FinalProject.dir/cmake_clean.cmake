@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/CNIT31500-FinalProject.dir/main.c.o"
-  "CNIT31500-FinalProject.pdb"
   "CNIT31500-FinalProject.exe"
+  "CNIT31500-FinalProject.pdb"
   "libCNIT31500-FinalProject.dll.a"
 )
 
