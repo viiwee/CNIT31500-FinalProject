@@ -54,3 +54,6 @@ CMakeLists.txt
 cmake-build-debug-mingw/
 
 
+/cmake-build-debug-cygwin/
+/.idea/codeStyles/
+/.idea/
