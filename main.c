@@ -9,12 +9,12 @@
 
 struct TicketStruct {
     time_t dateTime;
-    char *ticketID;
-    char *name;
-    char *email;
-    char *description;
-    char *roomNumber;
-    char *machineID;
+    int ticketID;
+    char name[30];
+    char email[30];
+    char description[100];
+    char roomNumber[10];
+    char machineID[10];
     int priority;
     struct TicketStruct *nextTicket;
 };
@@ -52,6 +52,7 @@ void printStack(struct TicketStruct *curTicket) { //curStudent will simply be an
     if (curTicket != NULL) { //Check if the list is empty
         for (int index = 1; curTicket != NULL; index++) { //Checking to see if the address is NULL or not
             printf("####%d of %d####\n", index, indexMax);
+            printf("Ticket ID: %d\n", curTicket->ticketID);
             printf("Date Submitted: %s", ctime(&curTicket->dateTime));
             printf("Name: %s\n", curTicket->name);
             printf("Email: %s\n", curTicket->email);
@@ -120,7 +121,7 @@ int importData(char fileName[], struct TicketStruct **curStruct) {
     while(fread(&temp, sizeof(struct TicketStruct), 1, dbFile)) {
         temp.nextTicket = NULL;
         addToEnd(&temp, curStruct); //Add this struct to the correct list
-        printf("Imported the following ticket ID: %s\n", temp.ticketID);
+        printf("Imported the following ticket ID: %d\n", temp.ticketID);
     }
     fclose(dbFile);
     return 0;
@@ -141,7 +142,24 @@ int exportData(char fileName[], struct TicketStruct **curStruct) {
     fclose(dbFile);
     return 0;
 }
-struct TicketStruct *createTicket (char name[], char email[], char description[], char roomNumber[], char machineID[], int priority) {
+int nextTicketID(struct TicketStruct *pActiveTickets, struct TicketStruct *pInactiveTickets) {
+    int newID = 1;
+    while (pActiveTickets != NULL) { //Check the active ticket list for the highest ticketID
+        if (pActiveTickets->ticketID >= newID) {
+            newID = pActiveTickets->ticketID + 1;
+        }
+        pActiveTickets = pActiveTickets->nextTicket; //Set to the next address
+    }
+
+    while (pInactiveTickets != NULL) { //Check the inactive ticket list for the highest ticketID
+        if (pInactiveTickets->ticketID >= newID) {
+            newID = pInactiveTickets->ticketID + 1;
+        }
+        pInactiveTickets = pInactiveTickets->nextTicket; //Set to the next address
+    }
+    return newID; //Return the new ID for a ticket to be generated
+}
+struct TicketStruct *createTicket (char name[], char email[], char description[], char roomNumber[], char machineID[], int priority, struct TicketStruct *pActiveTickets, struct TicketStruct *pInactiveTickets) {
     struct TicketStruct *newTicket;
     //Allocate space (malloc) for the new structure
     newTicket = (struct TicketStruct *) malloc(sizeof(struct TicketStruct));
@@ -152,8 +170,9 @@ struct TicketStruct *createTicket (char name[], char email[], char description[]
     }
     //Set the values of the new struct
     time(&curTime);
-    //newTicket->dateTime = curTime;
-    strcpy(name, newTicket->name);
+    newTicket->ticketID = nextTicketID(pActiveTickets, pInactiveTickets);
+    newTicket->dateTime = curTime;
+    strcpy(newTicket->name, name);
     strcpy(newTicket->email, email);
     strcpy(newTicket->description, description);
     strcpy(newTicket->roomNumber, roomNumber);
@@ -174,15 +193,16 @@ int main() {
             "Broken screen",
             "G10",
             "B220",
-            1),
+            1, activeTickets, inactiveTickets),
              &activeTickets);
-    addToEnd(createTicket(
+    addToEnd(
+    createTicket(
             "Alex Booher",
             "booher@live.com",
             "Shit broke",
             "223",
             "2AA",
-            3),
+            3, activeTickets, inactiveTickets),
              &activeTickets);
     //printStack(activeTickets);
     exportData("test.dat", &activeTickets);
