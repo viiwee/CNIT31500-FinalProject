@@ -6,6 +6,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 struct TicketStruct {
     time_t dateTime;
@@ -94,6 +95,73 @@ int addToEnd(struct TicketStruct *inputStruct, struct TicketStruct **pTicketStru
     return 0;
 }
 
+void sortByDate(struct TicketStruct *pTicketStruct, bool ascending) {
+
+    struct TicketStruct *pTempTicketStruct = createListPointer();
+    struct TicketStruct *curTicket, *tempCurTicket, *tempNextTicket, *pInsertAfter;
+
+    curTicket = pTicketStruct;
+    pTempTicketStruct = curTicket;
+    curTicket = curTicket->nextTicket;
+
+    while (curTicket != NULL)
+    {
+        tempCurTicket = pTempTicketStruct;
+       while (tempCurTicket != NULL)
+       {
+           if (ascending == true)
+           {
+               if (difftime(curTicket->dateTime, curTicket->nextTicket->dateTime) < 0)
+               {
+                   pInsertAfter = tempCurTicket;
+               }
+
+           }
+
+           else if (ascending == false)
+           {
+               if (difftime(curTicket->dateTime, curTicket->nextTicket->dateTime) > 0)
+               {
+                   pInsertAfter = tempCurTicket;
+               }
+       }
+    }
+}
+
+    free(pTempTicketStruct);
+}
+
+void sortByPriority(struct TicketStruct *pTicketStruct, bool ascending) {
+    //Create new structure pointer
+    struct TicketStruct *pTempTicketStruct = createListPointer();
+
+    //Create temporary structures: curTicket, nextTicket
+    struct TicketStruct *curTicket, *nextTicket, *tempCurTicket, *tempNextTicket, *pInsertAfter;
+    curTicket = pTicketStruct;
+
+    tempCurTicket = curTicket; //Send one ticket over to the new structure
+    curTicket = curTicket->nextTicket; //Set the next ticket in line
+
+    while (curTicket != NULL) { //Sorting through the inputted ticket struct
+        //Using the current struct, compare it to all of the structures within the tempStruct
+        while (tempCurTicket != NULL) {
+            if (curTicket->priority >= tempCurTicket->priority) {
+                // Check if the priority is lower than the current priority of the temp ticket
+                // Set variable = address of the ticket that this one should go after.
+                pInsertAfter = tempCurTicket; //Set this so we know where to insert the ticket once we search them all
+            }
+        }
+        //Create a whole new node, then add it to the struct
+        struct TicketStruct *newTicket = (struct TicketStruct *) malloc(sizeof(struct TicketStruct));
+        *newTicket = *curTicket; //Set the new struct to the current one we are comparing
+        newTicket->nextTicket = pInsertAfter->nextTicket; //Set the nextAddress of the new student to the next student.
+        pInsertAfter->nextTicket = curTicket; //Set the nextAddress of the student before this one to this new student's address
+        // If curTicket->prioritynb   > tempCurTicket: add to the list using the address set in the previous while loop
+    }
+    //Go through the structure
+        //Check priority of the
+    free(pTempTicketStruct);
+}
 void emptyStack(struct TicketStruct **stackPointer) {
     //Traverse the linked list. After finding the next address, clear the memory space for the current node and move on.
     struct TicketStruct *curTicket, *nextTicket;
